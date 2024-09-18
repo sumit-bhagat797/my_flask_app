@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HAProxy Configuration Form</title>
+    <style>
+        body {
+            background-color: #ffffff;
+            color: #333;
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            position: relative;
+        }
+        .container {
+            max-width: 600px;
+            margin: 50px auto;
+            padding: 20px;
+            background-color: rgba(0, 0, 0, 0.7);
+            border-radius: 10px;
+            position: relative;
+        }
+        h2 {
+            color: #fff;
+            text-align: center;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            color: #fff;
+        }
+        input[type="text"], input[type="password"], select {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            box-sizing: border-box;
+        }
+        input[type="file"] {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            box-sizing: border-box;
+        }
+        input[type="submit"] {
+            width: 100%;
+            padding: 10px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        input[type="submit"]:hover {
+            background-color: #45a049;
+        }
+        .logo {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            width: 200px;
+            height: auto;
+            z-index: 10;
+        }
+        .backend-servers {
+            margin-top: 20px;
+        }
+        .server-input {
+            margin-bottom: 10px;
+        }
+        .description-box {
+            margin-top: 20px;
+            padding: 10px;
+            background-color: #f9f9f9;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        .tooltip {
+            position: relative;
+            display: inline-block;
+        }
+        .tooltip .tooltiptext {
+            visibility: hidden;
+            width: 300px;
+            background-color: #555;
+            color: #fff;
+            text-align: center;
+            border-radius: 6px;
+            padding: 5px;
+            position: absolute;
+            z-index: 1;
+            bottom: 125%; /* Position above the element */
+            left: 50%;
+            margin-left: -150px;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+        .tooltip:hover .tooltiptext {
+            visibility: visible;
+            opacity: 1;
+        }
+    </style>
+    <script>
+        function updateBackendServers() {
+            const numServers = document.getElementById('numServers').value;
+            const container = document.getElementById('backend-servers-container');
+            container.innerHTML = ''; // Clear previous inputs
+
+            for (let i = 1; i <= numServers; i++) {
+                container.innerHTML += `
+                    <div class="server-input">
+                        <label for="app${i}_ip">App ${i} IP:</label>
+                        <input type="text" id="app${i}_ip" name="app${i}_ip" required>
+                        <label for="app${i}_port">App ${i} Port:</label>
+                        <select id="app${i}_port_select" name="app${i}_port_select" onchange="toggleCustomPort(${i})">
+                            <option value="80">80</option>
+                            <option value="443">443</option>
+                            <option value="custom">Custom</option>
+                        </select>
+                        <input type="text" id="custom_app${i}_port" name="custom_app${i}_port" style="display:none;" placeholder="Enter custom port">
+                    </div>
+                `;
+            }
+        }
+
+        function toggleCustomPort(index) {
+            const portSelect = document.getElementById(`app${index}_port_select`);
+            const customPortField = document.getElementById(`custom_app${index}_port`);
+            customPortField.style.display = (portSelect.value === 'custom') ? 'block' : 'none';
+        }
+
+        function showDescription() {
+            var descriptionBox = document.getElementById("algorithm_description");
+            var selectedAlgorithm = document.getElementById("load_balancing").value;
+
+            var descriptions = {
+                "roundrobin": "Round Robin – Requests are routed sequentially to each server in the pool until the cycle repeats itself. This method works well for servers with equal capacity but does not consider server load.",
+                "leastconn": "Least Connections – Requests are routed to the server with the fewest active connections, helping to balance the load when connection durations vary greatly.",
+                "first": "First – Requests are routed to the first available server with open slots. This method is useful when server capacities are known and fixed."
+            };
+
+            descriptionBox.innerHTML = `<h3>${selectedAlgorithm.charAt(0).toUpperCase() + selectedAlgorithm.slice(1)}</h3><p>${descriptions[selectedAlgorithm]}</p>`;
+        }
+
+        function showMaxconnDescription() {
+            var maxconnDescriptionBox = document.getElementById("maxconn_description");
+            var selectedMaxconn = document.getElementById("maxconn").value;
+
+            var descriptions = {
+                "1000": "For 1000 max connections: 2 cores, 2GB RAM VM configuration required.",
+                "4000": "For 4000 max connections: 4 cores, 4GB RAM VM configuration required.",
+                "20000": "For 20000 max connections: 8 cores, 16GB RAM VM configuration required.",
+                "150000": "For 150000 max connections: More resources are needed based on environment size."
+            };
+
+            maxconnDescriptionBox.innerHTML = `<h3>Maxconn ${selectedMaxconn}</h3><p>${descriptions[selectedMaxconn]}</p>`;
+        }
+
+        window.onload = function() {
+            showDescription();
+            showMaxconnDescription();
+        };
+
+        document.addEventListener('DOMContentLoaded', function() {
+            document.getElementById('load_balancing').addEventListener('change', showDescription);
+            document.getElementById('maxconn').addEventListener('change', showMaxconnDescription);
+            document.getElementById('frontend_port').addEventListener('change', function() {
+                var customPortField = document.getElementById('custom_frontend_port');
+                customPortField.style.display = (this.value === 'custom') ? 'block' : 'none';
+            });
+        });
+    </script>
+</head>
+<body>
+    <img src="/static/vmxlogo.jpg" alt="VMX Logo" class="logo">
+    <div class="container">
+        <h2>HAProxy Configuration Form</h2>
+        <form action="/" method="POST" enctype="multipart/form-data">
+            <label for="numServers">Number of Apps:</label>
+            <input type="text" id="numServers" name="numServers" onchange="updateBackendServers()" required>
+
+            <div class="backend-servers" id="backend-servers-container">
+                <!-- Dynamic server input fields will appear here -->
+            </div>
+
+            <label for="frontend_port">Frontend Port:</label>
+            <select id="frontend_port" name="frontend_port">
+                <option value="443">443</option>
+                <option value="80">80</option>
+                <option value="custom">Custom</option>
+            </select>
+            <input type="text" id="custom_frontend_port" name="custom_frontend_port" style="display:none;" placeholder="Enter custom port">
+
+            <label for="load_balancing" class="tooltip">Load Balancing Algorithm:
+                <span class="tooltiptext" id="algorithm_description">
+                    <!-- Description will be shown here -->
+                </span>
+            </label>
+            <select id="load_balancing" name="load_balancing">
+                <option value="roundrobin">Round Robin</option>
+                <option value="leastconn">Least Connections</option>
+                <option value="first">First</option>
+            </select>
+
+            <label for="maxconn" class="tooltip">Max Connections:
+                <span class="tooltiptext" id="maxconn_description">
+                    <!-- Maxconn description will be shown here -->
+                </span>
+            </label>
+            <select id="maxconn" name="maxconn">
+                <option value="1000">1000</option>
+                <option value="4000">4000</option>
+                <option value="20000">20000</option>
+                <option value="150000">150000</option>
+            </select>
+
+            <label for="username">HAProxy Stats Username:</label>
+            <input type="text" id="username" name="username" required>
+
+            <label for="password">HAProxy Stats Password:</label>
+            <input type="password" id="password" name="password" required>
+
+            <label for="ssl_pem">Upload SSL PEM File (optional):</label>
+            <input type="file" id="ssl_pem" name="ssl_pem" accept=".pem">
+
+            <input type="submit" value="Submit Configuration">
+        </form>
+    </div>
+</body>
+</html>
+

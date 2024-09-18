@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HAProxy Configuration Success</title>
+    <style>
+        body {
+            background-color: #ffffff; /* White background */
+            color: #333;
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            text-align: center;
+        }
+        .container {
+            max-width: 600px;
+            margin: 50px auto;
+            padding: 20px;
+            background-color: rgba(0, 0, 0, 0.7);
+            border-radius: 10px;
+            color: #fff;
+        }
+        h2 {
+            color: #4CAF50;
+        }
+        a {
+            color: #4CAF50;
+            text-decoration: none;
+            font-weight: bold;
+        }
+        a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Congratulations!</h2>
+        <p>Your HAProxy configuration has been successfully updated.</p>
+        <p>You can now use HAProxy for load balancing.</p>
+        <p>Your load balancer IP is {{ server_ip }}. You can point it to your DNS now.</p> <!-- New point added -->
+        <p>To monitor HAProxy, visit the following URL:</p>
+        <p><a href="http://{{ server_ip }}:8080/stats" target="_blank">HAProxy Monitoring Stats</a></p>
+    </div>
+</body>
+</html>
+

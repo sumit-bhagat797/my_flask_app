@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HAProxy Configuration Form</title>
+    <style>
+        body {
+            background-color: #ffffff; /* White background */
+            color: #333;
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            position: relative;
+        }
+        .container {
+            max-width: 600px;
+            margin: 50px auto;
+            padding: 20px;
+            background-color: rgba(0, 0, 0, 0.7);
+            border-radius: 10px;
+            position: relative;
+        }
+        h2 {
+            color: #fff;
+            text-align: center;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            color: #fff;
+        }
+        input[type="text"], input[type="password"], select {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            box-sizing: border-box;
+        }
+        input[type="file"] {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            box-sizing: border-box;
+        }
+        input[type="submit"] {
+            width: 100%;
+            padding: 10px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        input[type="submit"]:hover {
+            background-color: #45a049;
+        }
+        .logo {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            width: 200px;
+            height: auto;
+            z-index: 10;
+        }
+    </style>
+</head>
+<body>
+    <img src="vmxlogo.jpg" alt="VMX Logo" class="logo">
+    <div class="container">
+        <h2>HAProxy Configuration Form</h2>
+        <form action="/" method="post" enctype="multipart/form-data">
+            <label for="numServers">Number of Backend Servers:</label>
+            <input type="text" id="numServers" name="numServers" required>
+
+            <label for="frontend_port">Frontend Port:</label>
+            <input type="text" id="frontend_port" name="frontend_port" required>
+
+            <label for="load_balancing">Select Load Balancing Algorithm:</label>
+            <select id="load_balancing" name="load_balancing" required>
+                <option value="roundrobin">Round Robin</option>
+                <option value="leastconn">Least Connections</option>
+                <option value="leastresponse">Least Response Time</option>
+                <option value="first">First</option>
+            </select>
+
+            <label for="username">HAProxy Stats Username:</label>
+            <input type="text" id="username" name="username" required>
+
+            <label for="password">HAProxy Stats Password:</label>
+            <input type="password" id="password" name="password" required>
+
+            <label for="ssl_pem">Upload SSL PEM File (optional):</label>
+            <input type="file" id="ssl_pem" name="ssl_pem" accept=".pem">
+
+            <input type="submit" value="Submit">
+        </form>
+    </div>
+</body>
+</html>
+
